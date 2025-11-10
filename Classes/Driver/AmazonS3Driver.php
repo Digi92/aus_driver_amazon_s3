@@ -208,19 +208,6 @@ class AmazonS3Driver extends AbstractHierarchicalFilesystemDriver implements Str
     }
 
     /**
-     * loadExternalClasses
-     * @throws \Exception
-     */
-    public static function loadExternalClasses()
-    {
-        // Backwards compatibility: for TYPO3 versions lower than 10.0
-        $loadSdk = !Environment::isComposerMode() && !function_exists('Aws\\manifest');
-        if ($loadSdk) {
-            require ExtensionManagementUtility::extPath(self::EXTENSION_KEY) . '/Resources/Private/PHP/vendor/autoload.php';
-        }
-    }
-
-    /**
      * @return void
      */
     public function processConfiguration()
@@ -1162,9 +1149,6 @@ class AmazonS3Driver extends AbstractHierarchicalFilesystemDriver implements Str
         if (self::$settings === null) {
             self::$settings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get(self::EXTENSION_KEY);
 
-            if (!isset(self::$settings['doNotLoadAmazonLib']) || !self::$settings['doNotLoadAmazonLib']) {
-                self::loadExternalClasses();
-            }
             if ($this->compatibilityService->isFrontend() && (!isset(self::$settings['dnsPrefetch']) || self::$settings['dnsPrefetch']) && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController) {
                 $GLOBALS['TSFE']->additionalHeaderData['ausDriverAmazonS3_dnsPrefetch'] = '<link rel="dns-prefetch" href="' . $this->baseUrl . '">';
             }
